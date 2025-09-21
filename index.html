@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legacy Verse - Season 3 Store</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #fff;
+            overflow-x: hidden;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #0d1421 0%, #1a2332 25%, #0f2027 50%, #203a43 75%, #2c5364 100%);
+            background-size: 400% 400%;
+            animation: gradientFlow 15s ease-in-out infinite;
+            position: relative;
+        }
+
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 40% 40%, rgba(120, 219, 226, 0.1) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        @keyframes gradientFlow {
+            0%, 100% { background-position: 0% 50%; }
+            25% { background-position: 100% 50%; }
+            50% { background-position: 100% 100%; }
+            75% { background-position: 0% 100%; }
+        }
+
+        /* Animated Background Particles */
+        .background-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        .particle {
+            position: absolute;
+            background: linear-gradient(45deg, rgba(34, 197, 94, 0.3), rgba(16, 185, 129, 0.2));
+            border-radius: 50%;
+            animation: float 12s ease-in-out infinite;
+            filter: blur(2px);
+        }
+
+        .particle:nth-child(1) { width: 80px; height: 80px; top: 10%; left: 5%; animation-delay: 0s; }
+        .particle:nth-child(2) { width: 120px; height: 120px; top: 60%; left: 90%; animation-delay: 3s; }
+        .particle:nth-child(3) { width: 60px; height: 60px; top: 80%; left: 10%; animation-delay: 6s; }
+        .particle:nth-child(4) { width: 100px; height: 100px; top: 20%; left: 80%; animation-delay: 2s; }
+        .particle:nth-child(5) { width: 90px; height: 90px; top: 40%; left: 30%; animation-delay: 8s; }
+
+        @keyframes float {
+            0%, 100% { 
+                transform: translateY(0px) translateX(0px) scale(1); 
+                opacity: 0.3; 
+            }
+            33% { 
+                transform: translateY(-40px) translateX(20px) scale(1.2); 
+                opacity: 0.6; 
+            }
+            66% { 
+                transform: translateY(-20px) translateX(-30px) scale(0.8); 
+                opacity: 0.8; 
+            }
+        }
+
+        /* Loading Animation */
+        .loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #0d1421, #1a2332);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.8s ease;
+        }
+
+        .loader.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .loader-content {
+            text-align: center;
+        }
+
+        .loader-spinner {
+            width: 80px;
+            height: 80px;
+            border: 4px solid rgba(34, 197, 94, 0.2);
+            border-top: 4px solid #22c55e;
+            border-radius: 50%;
+            animation: spin 1.2s linear infinite;
+            margin: 0 auto 30px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loader h3 {
+            font-size: 1.4rem;
+            color: #22c55e;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 60px 20px 40px;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #22c55e, #16a34a, #059669);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .header .subtitle {
+            font-size: 1.3rem;
+            color: rgba(255, 255, 255, 0.7);
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        /* Navigation */
+        .nav-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 50px;
+            padding: 0 20px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(15px);
+            border-radius: 30px;
+            padding: 6px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        }
+
+        .nav-tab {
+            padding: 18px 35px;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.7);
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 1.1rem;
+            font-weight: 500;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .nav-tab::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .nav-tab:hover::before {
+            left: 100%;
+        }
+
+        .nav-tab.active {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #fff;
+            box-shadow: 0 8px 25px rgba(34, 197, 94, 0.4);
+            transform: translateY(-2px);
+        }
+
+        .nav-tab:hover:not(.active) {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            transform: translateY(-1px);
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 25px;
+        }
+
+        /* Section Styles */
+        .section {
+            display: none;
+            animation: fadeInUp 0.6s ease;
+        }
+
+        .section.active {
+            display: block;
+        }
+
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(30px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 35px;
+            margin-bottom: 80px;
+        }
+
+        /* Card Styles */
+        .card {
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 25px;
+            padding: 40px 30px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(34, 197, 94, 0.1), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .card:hover::before {
+            left: 100%;
+        }
+
+        .card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+            border-color: rgba(34, 197, 94, 0.4);
+            background: rgba(255, 255, 255, 0.12);
+        }
+
+        .card-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, #22c55e, #16a34a, #059669);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+            letter-spacing: 1px;
+        }
+
+        .card-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, #22c55e, transparent);
+            border-radius: 3px;
+        }
+
+        .card-price {
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: #22c55e;
+            margin-bottom: 25px;
+            text-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+        }
+
+        .card-features {
+            list-style: none;
+            margin-bottom: 35px;
+            text-align: left;
+        }
+
+        .card-features li {
+            padding: 10px 0;
+            color: rgba(255, 255, 255, 0.9);
+            position: relative;
+            padding-left: 30px;
+            line-height: 1.5;
+            font-weight: 400;
+        }
+
+        .card-features li::before {
+            content: '✓';
+            position: absolute;
+            left: 0;
+            color: #22c55e;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .card-description {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.6;
+            margin-bottom: 30px;
+            font-style: italic;
+            font-size: 1.1rem;
+        }
+
+        /* Button Container */
+        .button-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            align-items: center;
+        }
+
+        /* Button Styles */
+        .btn {
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            color: #fff;
+            border: none;
+            padding: 16px 32px;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 0 8px 25px rgba(34, 197, 94, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+            width: 100%;
+            max-width: 250px;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(34, 197, 94, 0.4);
+            background: linear-gradient(135deg, #16a34a, #059669);
+        }
+
+        .btn:active {
+            transform: translateY(-1px);
+        }
+
+        .view-details-btn {
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
+            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+        }
+
+        .view-details-btn:hover {
+            background: linear-gradient(135deg, #2563eb, #1d4ed8);
+            box-shadow: 0 15px 35px rgba(59, 130, 246, 0.4);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal.show {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: rgba(13, 20, 33, 0.95);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 25px;
+            padding: 40px;
+            max-width: 700px;
+            max-height: 85vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6);
+            animation: slideIn 0.4s ease;
+            width: 100%;
+        }
+
+        @keyframes slideIn {
+            from { transform: scale(0.8) translateY(30px); opacity: 0; }
+            to { transform: scale(1) translateY(0); opacity: 1; }
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 32px;
+            font-weight: bold;
+            cursor: pointer;
+            position: absolute;
+            top: 20px;
+            right: 25px;
+            transition: all 0.3s ease;
+            z-index: 1;
+        }
+
+        .close:hover {
+            color: #22c55e;
+            transform: scale(1.1);
+        }
+
+        .modal-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 25px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .modal-title {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, #22c55e, #16a34a, #059669);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .modal-price {
+            font-size: 2.2rem;
+            color: #22c55e;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .modal-description {
+            color: rgba(255, 255, 255, 0.8);
+            font-style: italic;
+            font-size: 1.2rem;
+            line-height: 1.6;
+        }
+
+        .modal-features {
+            list-style: none;
+            margin-bottom: 40px;
+        }
+
+        .modal-features li {
+            padding: 12px 0;
+            color: rgba(255, 255, 255, 0.9);
+            position: relative;
+            padding-left: 35px;
+            line-height: 1.5;
+            font-size: 1.1rem;
+        }
+
+        .modal-features li::before {
+            content: '⚡';
+            position: absolute;
+            left: 0;
+            color: #22c55e;
+            font-weight: bold;
+            font-size: 1.3rem;
+        }
+
+        .modal-features h3 {
+            color: #22c55e;
+            margin-bottom: 20px;
+            font-size: 1.4rem;
+            text-align: center;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .header h1 {
+                font-size: 2.5rem;
+                letter-spacing: 2px;
+            }
+
+            .header .subtitle {
+                font-size: 1.1rem;
+            }
+
+            .nav-tabs {
+                flex-direction: row;
+                width: 100%;
+            }
+
+            .nav-tab {
+                padding: 15px 25px;
+                font-size: 1rem;
+            }
+
+            .cards-grid {
+                grid-template-columns: 1fr;
+                gap: 25px;
+            }
+
+            .card {
+                padding: 30px 25px;
+            }
+
+            .card-title {
+                font-size: 1.8rem;
+            }
+
+            .card-price {
+                font-size: 2.4rem;
+            }
+
+            .modal-content {
+                padding: 30px 25px;
+                margin: 10px;
+            }
+
+            .modal-title {
+                font-size: 2rem;
+            }
+
+            .modal-price {
+                font-size: 1.8rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                padding: 40px 15px 30px;
+            }
+
+            .header h1 {
+                font-size: 2rem;
+                letter-spacing: 1px;
+            }
+
+            .header .subtitle {
+                font-size: 1rem;
+            }
+
+            .nav-tabs {
+                flex-direction: column;
+                width: 100%;
+            }
+
+            .nav-tab {
+                margin-bottom: 8px;
+                padding: 12px 20px;
+            }
+
+            .container {
+                padding: 0 15px;
+            }
+
+            .card {
+                padding: 25px 20px;
+            }
+
+            .card-title {
+                font-size: 1.6rem;
+            }
+
+            .card-price {
+                font-size: 2rem;
+            }
+
+            .btn {
+                padding: 14px 28px;
+                font-size: 0.9rem;
+            }
+
+            .modal-content {
+                padding: 25px 20px;
+                border-radius: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Loading Animation -->
+    <div class="loader" id="loader">
+        <div class="loader-content">
+            <div class="loader-spinner"></div>
+            <h3>Loading Legacy Verse Store...</h3>
+        </div>
+    </div>
+
+    <!-- Animated Background -->
+    <div class="background-animation">
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+        <div class="particle"></div>
+    </div>
+
+    <!-- Package Details Modal -->
+    <div id="packageModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div class="modal-header">
+                <span id="modalIcon" class="package-icon"></span>
+                <h2 id="modalTitle" class="modal-title"></h2>
+                <div id="modalPrice" class="modal-price"></div>
+                <p id="modalDescription" class="modal-description"></p>
+            </div>
+            <div class="modal-body">
+                <h3 style="color: #22c55e; margin-bottom: 15px;">Complete Package Includes:</h3>
+                <ul id="modalFeatures" class="modal-features"></ul>
+                <div style="text-align: center; margin-top: 30px;">
+                    <button class="btn" onclick="purchaseFromModal()">Purchase This Package</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <h1>Legacy Verse</h1>
+        <p class="subtitle">Season 3 Premium Store</p>
+    </header>
+
+    <!-- Navigation -->
+    <div class="nav-container">
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchSection('plans')">Premium Plans</button>
+            <button class="nav-tab" onclick="switchSection('crates')">Premium Crates</button>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Premium Plans Section -->
+        <section id="plans" class="section active">
+            <div class="cards-grid">
+                <!-- Diamond Package -->
+                <div class="card">
+                    <h3 class="card-title">Diamond Package</h3>
+                    <div class="card-price">₹51</div>
+                    <div class="card-description">
+                        Perfect for new players wanting a strong start.
+                    </div>
+                    <ul class="card-features">
+                        <li>Full Diamond Armor Set</li>
+                        <li>Diamond Sword (Sharpness III)</li>
+                        <li>Enhanced Diamond Pickaxe</li>
+                        <li>₹5,000 in-game cash</li>
+                        <li>5× Totem of Undying</li>
+                    </ul>
+                    <div class="button-container">
+                        <button class="btn view-details-btn" onclick="showPackageDetails('diamond')">View Details</button>
+                        <button class="btn" onclick="purchase('Diamond Package')">Purchase Now</button>
+                    </div>
+                </div>
+
+                <!-- Demon Package -->
+                <div class="card">
+                    <h3 class="card-title">Demon Package</h3>
+                    <div class="card-price">₹87</div>
+                    <div class="card-description">
+                        Step up your game with enhanced gear and perks.
+                    </div>
+                    <ul class="card-features">
+                        <li>Premium VIP++ (30 days)</li>
+                        <li>Server Statistics Display</li>
+                        <li>Chicken Spawner</li>
+                        <li>Enchanted Diamond Gear</li>
+                        <li>₹7,500 in-game cash</li>
+                    </ul>
+                    <div class="button-container">
+                        <button class="btn view-details-btn" onclick="showPackageDetails('demon')">View Details</button>
+                        <button class="btn" onclick="purchase('Demon Package')">Purchase Now</button>
+                    </div>
+                </div>
+
+                <!-- Legend Package -->
+                <div class="card">
+                    <h3 class="card-title">Legend Package</h3>
+                    <div class="card-price">₹130</div>
+                    <div class="card-description">
+                        Become a true legend with elite gear and exclusive perks.
+                    </div>
+                    <ul class="card-features">
+                        <li>Premium MVP (40 days)</li>
+                        <li>Shopping area privileges</li>
+                        <li>Multiple Spawners</li>
+                        <li>God Diamond Armor</li>
+                        <li>₹10,000 in-game cash</li>
+                    </ul>
+                    <div class="button-container">
+                        <button class="btn view-details-btn" onclick="showPackageDetails('legend')">View Details</button>
+                        <button class="btn" onclick="purchase('Legend Package')">Purchase Now</button>
+                    </div>
+                </div>
+
+                <!-- Immortal Package -->
+                <div class="card">
+                    <h3 class="card-title">Immortal Package</h3>
+                    <div class="card-price">₹160</div>
+                    <div class="card-description">
+                        Dominate the battlefield with unmatched power and tools.
+                    </div>
+                    <ul class="card-features">
+                        <li>Premium MVP+ (50 days)</li>
+                        <li>Shopping & Beacon privileges</li>
+                        <li>Multiple Spawners</li>
+                        <li>God Diamond Armor & Tools</li>
+                        <li>₹20,000 in-game cash</li>
+                    </ul>
+                    <div class="button-container">
+                        <button class="btn view-details-btn" onclick="showPackageDetails('immortal')">View Details</button>
+                        <button class="btn" onclick="purchase('Immortal Package')">Purchase Now</button>
+                    </div>
+                </div>
+
+                <!-- Radiant Package -->
+                <div class="card">
+                    <h3 class="card-title">Radiant Package</h3>
+                    <div class="card-price">₹200</div>
+                    <div class="card-description">
+                        The ultimate package for true Minecraft masters.
+                    </div>
+                    <ul class="card-features">
+                        <li>Premium MVP++ (60 days)</li>
+                        <li>2× Beacons, 16× Sponge</li>
+                        <li>Multiple Premium Spawners</li>
+                        <li>God Netherite Armor & Tools</li>
+                        <li>₹30,000 in-game cash</li>
+                    </ul>
+                    <div class="button-container">
+                        <button class="btn view-details-btn" onclick="showPackageDetails('radiant')">View Details</button>
+                        <button class="btn" onclick="purchase('Radiant Package')">Purchase Now</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Premium Crates Section -->
+        <section id="crates" class="section">
+            <div class="cards-grid">
+                <!-- Amethyst Crate -->
+                <div class="card">
+                    <h3 class="card-title">Amethyst Crate</h3>
+                    <div class="card-price">₹25</div>
+                    <div class="card-description">
+                        Basic tier crate containing essential items and common rewards to get you started on your journey.
+                    </div>
+                    <button class="btn" onclick="purchase('Amethyst Crate')">Buy Key</button>
+                </div>
+
+                <!-- Gold Crate -->
+                <div class="card">
+                    <h3 class="card-title">Gold Crate</h3>
+                    <div class="card-price">₹50</div>
+                    <div class="card-description">
+                        Mid-tier rewards featuring rare enchanted weapons, armor sets, valuable resources, and exclusive cosmetic items.
+                    </div>
+                    <button class="btn" onclick="purchase('Gold Crate')">Buy Key</button>
+                </div>
+
+                <!-- Prime Crate -->
+                <div class="card">
+                    <h3 class="card-title">Prime Crate</h3>
+                    <div class="card-price">₹70</div>
+                    <div class="card-description">
+                        Premium crate with high-tier enchanted gear, rare blocks, special tools, and exclusive rank upgrades.
+                    </div>
+                    <button class="btn" onclick="purchase('Prime Crate')">Buy Key</button>
+                </div>
+
+                <!-- Crimson Crate -->
+                <div class="card">
+                    <h3 class="card-title">Crimson Crate</h3>
+                    <div class="card-price">₹80</div>
+                    <div class="card-description">
+                        Legendary tier containing mythical weapons, ancient artifacts, massive resource bundles, and unique abilities.
+                    </div>
+                    <button class="btn" onclick="purchase('Crimson Crate')">Buy Key</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Package Details Data
+        const packageDetails = {
+            diamond: {
+                icon: '💎',
+                title: 'Diamond Package',
+                price: '₹51',
+                description: 'Perfect for new players wanting a strong start.',
+                features: [
+                    'Full set of Diamond Armor',
+                    'Diamond Sword (Sharpness III)',
+                    'Diamond Pickaxe (Efficiency III, Fortune III, Silk Touch, Mending)',
+                    '3× Unbreaking III Enchantments',
+                    'Essential survival tools & items',
+                    '₹5,000 in-game cash',
+                    '5× Totem of Undying',
+                    '32 Golden Carrots',
+                    '2 stacks of food',
+                    'Miscellaneous survival items',
+                    '2× Blocks of Diamond',
+                    '5× Blocks of Gold',
+                    '14× Blocks of Iron'
+                ]
+            },
+            demon: {
+                icon: '👹',
+                title: 'Demon Package',
+                price: '₹87',
+                description: 'Step up your game with enhanced gear and perks.',
+                features: [
+                    'Premium VIP++ (30 days)',
+                    'Name displayed in Server Statistics',
+                    '1× Chicken Spawner',
+                    'Full set of Enchanted Diamond Armor & Tools',
+                    'God Enchantment Bow',
+                    '2× Coast Armor Trims',
+                    '4× Mending I Enchantments',
+                    'Sharpness V & Efficiency V Enchantments',
+                    '4× Protection III Enchantments',
+                    '₹7,500 in-game cash',
+                    '7× Totem of Undying',
+                    '5× Golden Apples',
+                    '48 Golden Carrots',
+                    '3 stacks of food',
+                    '5× Blocks of Diamond',
+                    '8× Blocks of Emerald',
+                    '10× Blocks of Gold',
+                    '21× Blocks of Iron',
+                    '32× Bottles o\' Enchanting'
+                ]
+            },
+            legend: {
+                icon: '🌟',
+                title: 'Legend Package',
+                price: '₹130',
+                description: 'Become a true legend with elite gear and exclusive perks.',
+                features: [
+                    'Premium MVP (40 days)',
+                    'Name displayed in Server Statistics',
+                    'Shopping area privileges',
+                    'Skeleton & Chicken Spawners',
+                    '2× Coast & 2× Dune Armor Trims',
+                    'Full set of God Diamond Armor',
+                    'Netherite Upgrade Template',
+                    'Elytra + 64 Rockets',
+                    'God Shield & Trident',
+                    '₹10,000 in-game cash',
+                    '400× Block of Protection Claim',
+                    '12× Totem of Undying',
+                    '3× Enchanted Golden Apples + 15× Golden Apples',
+                    '64 Golden Carrots',
+                    '4 stacks of food (player\'s choice)',
+                    '2× Netherite Ingots',
+                    'Blocks: 8 Diamond, 10 Emerald, 20 Gold, 30 Iron',
+                    '64× Bottles o\' Enchanting',
+                    '5× Ghast Tears'
+                ]
+            },
+            immortal: {
+                icon: '⚔️',
+                title: 'Immortal Package',
+                price: '₹160',
+                description: 'Dominate the battlefield with unmatched power and tools.',
+                features: [
+                    'Premium MVP+ (50 days)',
+                    'Name displayed in Server Statistics',
+                    'Shopping area privileges & Beacon',
+                    'Cow, Skeleton & Zombie Spawners',
+                    'Tide & Sentry Armor Trims',
+                    'Full set of God Diamond Armor & Tools',
+                    'Mace, God Elytra + 3 stacks Rockets',
+                    'God Shield, God Bow, Trident with Riptide III, Loyalty III, Impaling V',
+                    'Mending I, Unbreaking III, Channeling I Enchantments',
+                    '600× Block of Protection Claim',
+                    '₹20,000 in-game cash',
+                    '17× Totem of Undying',
+                    '6× Enchanted Golden Apples + 22× Golden Apples',
+                    '90 Golden Carrots',
+                    '10× Netherite Ingots',
+                    'Blocks: 10 Diamond, 12 Emerald, 20 Gold, 40 Iron',
+                    '90× Bottles o\' Enchanting'
+                ]
+            },
+            radiant: {
+                icon: '✨',
+                title: 'Radiant Package',
+                price: '₹200',
+                description: 'The ultimate package for true Minecraft masters.',
+                features: [
+                    'Premium MVP++ (60 days)',
+                    'Name displayed in Server Statistics',
+                    'Shopping area privileges',
+                    '2× Beacons, 16× Sponge',
+                    'Iron, Cow, Skeleton & Zombie Spawners',
+                    'Wild, Silence & Vex Armor Trims',
+                    'Full set of God Netherite Armor & Tools',
+                    'Netherite Upgrade Template',
+                    'God Mace, Trident, God Shield, God Bow & God Elytra',
+                    '5 stacks of Rockets',
+                    'Riptide III, Impaling V, Mending I, Unbreaking III, Channeling I Enchantments',
+                    'Swift Sneak III & Soul Speed III Books',
+                    '800× Block of Protection Claim',
+                    '₹30,000 in-game cash',
+                    '27× Totem of Undying',
+                    '10× Enchanted Golden Apples + 30× Golden Apples',
+                    '2 stacks of Golden Carrots',
+                    '5 stacks of food',
+                    '18× Netherite Ingots',
+                    'Blocks: 17 Diamond, 24 Emerald, 30 Gold, 64 Iron',
+                    '3× Potion of Invisibility, 3× Potion of Slow Falling',
+                    '5× Bottle of Bad Omen V',
+                    '128× Bottles o\' Enchanting',
+                    '15× Ghast Tears'
+                ]
+            }
+        };
+
+        let currentPackage = null;
+
+        // Loading Animation
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                const loader = document.getElementById('loader');
+                loader.classList.add('fade-out');
+                setTimeout(() => {
+                    loader.style.display = 'none';
+                }, 500);
+            }, 1500);
+        });
+
+        // Section Switching
+        function switchSection(section) {
+            // Remove active class from all tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+            
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(sec => {
+                sec.classList.remove('active');
+            });
+            
+            // Show selected section with animation
+            setTimeout(() => {
+                document.getElementById(section).classList.add('active');
+            }, 150);
+        }
+
+        // Show Package Details Modal
+        function showPackageDetails(packageType) {
+            const package = packageDetails[packageType];
+            if (!package) return;
+
+            currentPackage = package;
+            
+            document.getElementById('modalIcon').textContent = package.icon;
+            document.getElementById('modalTitle').textContent = package.title;
+            document.getElementById('modalPrice').textContent = package.price;
+            document.getElementById('modalDescription').textContent = package.description;
+            
+            const featuresList = document.getElementById('modalFeatures');
+            featuresList.innerHTML = '';
+            
+            package.features.forEach(feature => {
+                const li = document.createElement('li');
+                li.textContent = feature;
+                featuresList.appendChild(li);
+            });
+            
+            document.getElementById('packageModal').classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Close Modal
+        function closeModal() {
+            document.getElementById('packageModal').classList.remove('show');
+            document.body.style.overflow = 'auto';
+            currentPackage = null;
+        }
+
+        // Purchase from Modal
+        function purchaseFromModal() {
+            if (currentPackage) {
+                purchase(currentPackage.title);
+            }
+        }
+
+        // Purchase Function
+        function purchase(item) {
+            alert(`Thank you for your interest in ${item}! This would normally redirect to a payment processor.`);
+        }
+
+        // Enhanced Particle Animation
+        function createFloatingParticles() {
+            const container = document.querySelector('.background-animation');
+            
+            setInterval(() => {
+                if (container.children.length < 15) {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    particle.style.width = Math.random() * 80 + 30 + 'px';
+                    particle.style.height = particle.style.width;
+                    particle.style.left = Math.random() * 100 + '%';
+                    particle.style.top = Math.random() * 100 + '%';
+                    particle.style.animationDelay = Math.random() * 8 + 's';
+                    particle.style.opacity = Math.random() * 0.6 + 0.2;
+                    
+                    container.appendChild(particle);
+                    
+                    setTimeout(() => {
+                        if (particle.parentNode) {
+                            particle.parentNode.removeChild(particle);
+                        }
+                    }, 8000);
+                }
+            }, 2000);
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('packageModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            createFloatingParticles();
+        });
+
+        // Smooth scroll behavior
+        document.documentElement.style.scrollBehavior = 'smooth';
+    </script>
+</body>
+</html>
