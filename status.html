@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legacy Verse - Server Status</title>
+    <meta name="description" content="Real-time status updates for Legacy Verse Minecraft server">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-nav">
+                <a href="index.html" class="back-link">
+                    <i data-feather="arrow-left"></i>
+                    <span>Back to Legacy Verse</span>
+                </a>
+            </div>
+            <h1 class="title">Server Status</h1>
+            <p class="subtitle">Real-time updates for your Legacy Verse experience</p>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Hero Stats Card -->
+            <section class="hero-stats" aria-labelledby="hero-stats-title">
+                <h2 id="hero-stats-title" class="sr-only">Server Statistics</h2>
+                
+                <!-- Platform Badges -->
+                <div class="platform-badges">
+                    <span class="badge java-badge" id="javaBadge">
+                        <i data-feather="monitor"></i>
+                        <span class="status-dot loading"></span>
+                        <span>Java Edition</span>
+                    </span>
+                    <span class="badge bedrock-badge" id="bedrockBadge">
+                        <i data-feather="smartphone"></i>
+                        <span class="status-dot loading"></span>
+                        <span>Bedrock Edition</span>
+                    </span>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="playersOnline">
+                            <span class="loading">--</span>
+                        </div>
+                        <div class="stat-label">Players Online</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-number" id="maxSlots">
+                            <span class="loading">--</span>
+                        </div>
+                        <div class="stat-label">Max Slots</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-number" id="serverVersion">
+                            <span class="loading">Loading...</span>
+                        </div>
+                        <div class="stat-label">Server Version</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Component Status Grid -->
+            <section class="component-status" aria-labelledby="component-status-title">
+                <h2 id="component-status-title">Component Status</h2>
+                <div class="components-grid">
+                    <div class="component-card" data-component="login">
+                        <i data-feather="log-in" class="component-icon"></i>
+                        <div class="component-info">
+                            <span class="component-name">Login</span>
+                            <div class="status-indicator" aria-label="Login status">
+                                <span class="status-dot loading"></span>
+                                <span class="status-text">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="component-card" data-component="chat">
+                        <i data-feather="message-circle" class="component-icon"></i>
+                        <div class="component-info">
+                            <span class="component-name">Chat</span>
+                            <div class="status-indicator" aria-label="Chat status">
+                                <span class="status-dot loading"></span>
+                                <span class="status-text">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="component-card" data-component="iph">
+                        <i data-feather="shield" class="component-icon"></i>
+                        <div class="component-info">
+                            <span class="component-name">IPH</span>
+                            <div class="status-indicator" aria-label="IPH status">
+                                <span class="status-dot loading"></span>
+                                <span class="status-text">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="component-card" data-component="events">
+                        <i data-feather="calendar" class="component-icon"></i>
+                        <div class="component-info">
+                            <span class="component-name">Events</span>
+                            <div class="status-indicator" aria-label="Events status">
+                                <span class="status-dot loading"></span>
+                                <span class="status-text">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="component-card" data-component="ddos">
+                        <i data-feather="umbrella" class="component-icon"></i>
+                        <div class="component-info">
+                            <span class="component-name">DDoS Protection</span>
+                            <div class="status-indicator" aria-label="DDoS Protection status">
+                                <span class="status-dot loading"></span>
+                                <span class="status-text">Loading...</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="component-card" data-component="website">
+                        <i data-feather="globe" class="component-icon"></i>
+                        <div class="component-info">
+                            <span class="component-name">Website</span>
+                            <div class="status-indicator" aria-label="Website status">
+                                <span class="status-dot online"></span>
+                                <span class="status-text">Online</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Online Players -->
+            <section class="online-players" aria-labelledby="online-players-title">
+                <h2 id="online-players-title">Online Players</h2>
+                <div class="players-container" id="playersContainer">
+                    <p class="no-players">Loading player data...</p>
+                </div>
+            </section>
+
+            <!-- Uptime Chart -->
+            <section class="uptime-section" aria-labelledby="uptime-title">
+                <h2 id="uptime-title">Uptime This Month</h2>
+                <div class="chart-container">
+                    <canvas id="uptimeChart" aria-label="Server uptime chart showing percentage over time"></canvas>
+                </div>
+            </section>
+
+            <!-- Incident History -->
+            <section class="incident-history" aria-labelledby="incident-title">
+                <h2 id="incident-title">Incident & Maintenance History</h2>
+                <div class="incidents-list" id="incidentsList">
+                    <div class="incident-item">
+                        <div class="incident-icon">
+                            <i data-feather="check-circle"></i>
+                        </div>
+                        <div class="incident-content">
+                            <h3 class="incident-title">Server Maintenance Complete</h3>
+                            <p class="incident-description">Routine server maintenance and plugin updates completed successfully.</p>
+                            <time class="incident-date">December 20, 2024</time>
+                        </div>
+                        <div class="incident-time">14:30</div>
+                    </div>
+                    
+                    <div class="incident-item">
+                        <div class="incident-icon">
+                            <i data-feather="info"></i>
+                        </div>
+                        <div class="incident-content">
+                            <h3 class="incident-title">Network Optimization</h3>
+                            <p class="incident-description">Server network optimizations deployed to improve connection stability.</p>
+                            <time class="incident-date">December 18, 2024</time>
+                        </div>
+                        <div class="incident-time">09:15</div>
+                    </div>
+                    
+                    <div class="incident-item">
+                        <div class="incident-icon">
+                            <i data-feather="alert-triangle"></i>
+                        </div>
+                        <div class="incident-content">
+                            <h3 class="incident-title">Brief Connection Issues</h3>
+                            <p class="incident-description">Temporary connection issues resolved. All systems operating normally.</p>
+                            <time class="incident-date">December 15, 2024</time>
+                        </div>
+                        <div class="incident-time">16:45</div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Error Toast -->
+    <div class="toast error-toast" id="errorToast">
+        <div class="toast-content">
+            <i data-feather="alert-circle"></i>
+            <span>Connection error. Retrying...</span>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+    <script>
+        // Initialize Feather icons
+        feather.replace();
+    </script>
+</body>
+</html>
