@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legacy Verse - Live Player Count</title>
+    <meta name="description" content="Real-time player count for Legacy Verse Minecraft server">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- Feather Icons -->
+    <script src="https://unpkg.com/feather-icons"></script>
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0a0a0b;
+            --bg-card: #1a1a1d;
+            --bg-accent: #2a2a2f;
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --text-muted: #666666;
+            --accent-green: #00ff88;
+            --accent-glow: rgba(0, 255, 136, 0.3);
+            --gradient: linear-gradient(135deg, #0a0a0b 0%, #1a1a1d 100%);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 25% 25%, rgba(0, 255, 136, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 75% 75%, rgba(0, 255, 136, 0.05) 0%, transparent 50%);
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .server-title {
+            font-size: 3rem;
+            font-weight: 800;
+            background: linear-gradient(45deg, var(--accent-green), #ffffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 0.5rem;
+            animation: glow 3s ease-in-out infinite alternate;
+        }
+
+        .server-address {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: var(--accent-green);
+            animation: pulse 2s infinite;
+            box-shadow: 0 0 10px var(--accent-glow);
+        }
+
+        .status-dot.offline {
+            background: #ff4444;
+            box-shadow: 0 0 10px rgba(255, 68, 68, 0.3);
+        }
+
+        .main-card {
+            background: var(--bg-card);
+            border-radius: 20px;
+            padding: 3rem;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.3),
+                0 0 0 1px rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+            animation: fadeInUp 1s ease-out 0.3s both;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .main-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--accent-green), transparent);
+            animation: shimmer 3s infinite;
+        }
+
+        .player-display {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .player-count {
+            font-size: 6rem;
+            font-weight: 800;
+            color: var(--accent-green);
+            line-height: 1;
+            margin-bottom: 1rem;
+            animation: countUp 0.8s ease-out;
+            text-shadow: 0 0 30px var(--accent-glow);
+            transition: all 0.3s ease;
+        }
+
+        .player-count.updating {
+            transform: scale(1.05);
+            text-shadow: 0 0 40px var(--accent-glow);
+        }
+
+        .player-label {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .chart-container {
+            height: 300px;
+            margin-top: 2rem;
+            background: var(--bg-accent);
+            border-radius: 15px;
+            padding: 1.5rem;
+            animation: fadeInUp 1s ease-out 0.6s both;
+        }
+
+        .last-update {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-top: 1rem;
+            animation: fadeInUp 1s ease-out 0.9s both;
+        }
+
+        .loading {
+            opacity: 0.6;
+            animation: breathe 2s ease-in-out infinite;
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 0.8;
+            }
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 20px var(--accent-glow);
+            }
+            to {
+                text-shadow: 0 0 30px var(--accent-glow), 0 0 40px var(--accent-glow);
+            }
+        }
+
+        @keyframes shimmer {
+            0% {
+                transform: translateX(-100%);
+            }
+            100% {
+                transform: translateX(100%);
+            }
+        }
+
+        @keyframes countUp {
+            from {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            to {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes breathe {
+            0%, 100% {
+                opacity: 0.6;
+            }
+            50% {
+                opacity: 0.9;
+            }
+        }
+
+        /* Error state */
+        .error-state {
+            text-align: center;
+            color: #ff4444;
+            padding: 2rem;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        .error-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .server-title {
+                font-size: 2rem;
+            }
+
+            .main-card {
+                padding: 2rem;
+            }
+
+            .player-count {
+                font-size: 4rem;
+            }
+
+            .chart-container {
+                height: 250px;
+                padding: 1rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .server-title {
+                font-size: 1.5rem;
+            }
+
+            .player-count {
+                font-size: 3rem;
+            }
+
+            .player-label {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="server-title">Legacy Verse</h1>
+            <div class="server-address">
+                <i data-feather="server"></i>
+                <span>play.legacyverse.tech</span>
+                <div class="status-dot loading" id="serverStatus"></div>
+            </div>
+        </div>
+
+        <div class="main-card">
+            <div class="player-display">
+                <div class="player-count loading" id="playerCount">--</div>
+                <div class="player-label">Players Online</div>
+            </div>
+
+            <div class="chart-container">
+                <canvas id="playerChart"></canvas>
+            </div>
+
+            <div class="last-update" id="lastUpdate">
+                Connecting to server...
+            </div>
+        </div>
+    </div>
+
+    <script>
+        class MinecraftPlayerTracker {
+            constructor() {
+                this.serverIP = 'play.legacyverse.tech';
+                this.apiUrls = [
+                    `https://corsproxy.io/?${encodeURIComponent(`https://api.mcsrvstat.us/2/${this.serverIP}`)}`,
+                    `https://api.allorigins.win/get?url=${encodeURIComponent(`https://api.mcsrvstat.us/2/${this.serverIP}`)}`,
+                ];
+                this.currentApiIndex = 0;
+                this.chart = null;
+                this.playerHistory = JSON.parse(localStorage.getItem('playerHistory') || '[]');
+                this.lastPlayerCount = 0;
+                
+                this.init();
+            }
+
+            async init() {
+                this.initChart();
+                await this.fetchPlayerCount();
+                this.startAutoUpdate();
+                feather.replace();
+            }
+
+            async fetchPlayerCount() {
+                for (let i = 0; i < this.apiUrls.length; i++) {
+                    const apiUrl = this.apiUrls[this.currentApiIndex];
+                    
+                    try {
+                        console.log(`🔍 Fetching from: ${this.serverIP}`);
+                        
+                        const response = await fetch(apiUrl, {
+                            method: 'GET',
+                            headers: { 'Accept': 'application/json' },
+                            signal: AbortSignal.timeout(10000)
+                        });
+
+                        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                        
+                        const data = await response.json();
+                        let serverData;
+
+                        if (this.currentApiIndex === 0) {
+                            serverData = data;
+                        } else {
+                            serverData = JSON.parse(data.contents);
+                        }
+
+                        console.log('✅ Server data:', serverData);
+                        this.updateDisplay(serverData);
+                        return;
+
+                    } catch (error) {
+                        console.error(`❌ API ${this.currentApiIndex + 1} failed:`, error);
+                        this.currentApiIndex = (this.currentApiIndex + 1) % this.apiUrls.length;
+                    }
+                }
+
+                this.showError();
+            }
+
+            updateDisplay(data) {
+                const isOnline = data.online;
+                const playerCount = isOnline ? (data.players?.online || 0) : 0;
+                
+                // Update status indicator
+                const statusDot = document.getElementById('serverStatus');
+                statusDot.className = `status-dot ${isOnline ? '' : 'offline'}`;
+                
+                // Update player count with animation
+                this.animatePlayerCount(playerCount);
+                
+                // Record data
+                this.recordPlayerData(playerCount);
+                
+                // Update chart
+                this.updateChart();
+                
+                // Update timestamp
+                const now = new Date();
+                document.getElementById('lastUpdate').textContent = 
+                    `Last updated: ${now.toLocaleTimeString()}`;
+                
+                // Remove loading state
+                document.getElementById('playerCount').classList.remove('loading');
+            }
+
+            animatePlayerCount(targetCount) {
+                const element = document.getElementById('playerCount');
+                const currentCount = parseInt(element.textContent) || 0;
+                
+                element.classList.add('updating');
+                
+                const duration = 800;
+                const startTime = Date.now();
+                const startCount = currentCount;
+                const countDiff = targetCount - startCount;
+                
+                const animate = () => {
+                    const elapsed = Date.now() - startTime;
+                    const progress = Math.min(elapsed / duration, 1);
+                    
+                    const easeOutQuart = 1 - Math.pow(1 - progress, 4);
+                    const currentValue = Math.round(startCount + (countDiff * easeOutQuart));
+                    
+                    element.textContent = currentValue;
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(animate);
+                    } else {
+                        element.classList.remove('updating');
+                    }
+                };
+                
+                animate();
+            }
+
+            recordPlayerData(playerCount) {
+                const now = new Date();
+                const timeKey = now.toISOString();
+                
+                this.playerHistory.push({
+                    time: timeKey,
+                    players: playerCount,
+                    timestamp: now.getTime()
+                });
+                
+                // Keep only last 2 hours of data
+                const twoHoursAgo = now.getTime() - (2 * 60 * 60 * 1000);
+                this.playerHistory = this.playerHistory.filter(entry => entry.timestamp > twoHoursAgo);
+                
+                localStorage.setItem('playerHistory', JSON.stringify(this.playerHistory));
+            }
+
+            initChart() {
+                const ctx = document.getElementById('playerChart');
+                if (!ctx) return;
+
+                const gradient = ctx.getContext('2d').createLinearGradient(0, 0, 0, 300);
+                gradient.addColorStop(0, 'rgba(0, 255, 136, 0.4)');
+                gradient.addColorStop(1, 'rgba(0, 255, 136, 0.05)');
+
+                this.chart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: [],
+                        datasets: [{
+                            label: 'Players Online',
+                            data: [],
+                            borderColor: '#00ff88',
+                            backgroundColor: gradient,
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointBackgroundColor: '#00ff88',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointRadius: 5,
+                            pointHoverRadius: 8,
+                            pointHoverBackgroundColor: '#00ff88',
+                            pointHoverBorderColor: '#ffffff',
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: 'rgba(26, 26, 29, 0.9)',
+                                titleColor: '#ffffff',
+                                bodyColor: '#b3b3b3',
+                                borderColor: '#00ff88',
+                                borderWidth: 1,
+                                cornerRadius: 10,
+                                displayColors: false,
+                                callbacks: {
+                                    label: (context) => `${context.parsed.y} players online`,
+                                    title: (context) => {
+                                        const date = new Date(context[0].label);
+                                        return date.toLocaleTimeString();
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.1)',
+                                    borderColor: 'rgba(255, 255, 255, 0.2)'
+                                },
+                                ticks: {
+                                    color: '#b3b3b3',
+                                    callback: value => Math.round(value)
+                                }
+                            },
+                            x: {
+                                grid: {
+                                    color: 'rgba(255, 255, 255, 0.05)',
+                                    borderColor: 'rgba(255, 255, 255, 0.1)'
+                                },
+                                ticks: {
+                                    color: '#b3b3b3',
+                                    maxTicksLimit: 8,
+                                    callback: (value, index, values) => {
+                                        const label = this.chart.data.labels[value];
+                                        return new Date(label).toLocaleTimeString('en-US', { 
+                                            hour: 'numeric',
+                                            minute: '2-digit'
+                                        });
+                                    }
+                                }
+                            }
+                        },
+                        interaction: {
+                            intersect: false,
+                            mode: 'index'
+                        },
+                        animation: {
+                            duration: 1000,
+                            easing: 'easeOutQuart'
+                        }
+                    }
+                });
+            }
+
+            updateChart() {
+                if (!this.chart) return;
+
+                const labels = this.playerHistory.map(entry => entry.time);
+                const data = this.playerHistory.map(entry => entry.players);
+
+                this.chart.data.labels = labels;
+                this.chart.data.datasets[0].data = data;
+                this.chart.update('active');
+            }
+
+            showError() {
+                document.getElementById('playerCount').textContent = '0';
+                document.getElementById('serverStatus').className = 'status-dot offline';
+                document.getElementById('lastUpdate').textContent = 'Connection failed - Server may be offline';
+            }
+
+            startAutoUpdate() {
+                setInterval(() => {
+                    this.fetchPlayerCount();
+                }, 60000); // Update every minute
+            }
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new MinecraftPlayerTracker();
+        });
+    </script>
+</body>
+</html>
